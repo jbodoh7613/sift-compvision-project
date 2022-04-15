@@ -30,28 +30,40 @@ def create_scale_space(img: np.ndarray, num_octaves: int = 4, num_scales: int = 
 This function takes a scale space tuple and returns a LoG (Laplacian of Gaussian) space represented as a tuple of tuples, where each tuple within the main tuple consists of the LoG images of its respective octave.
 LoG is calculated using Difference of Gaussians, where, for each image in each octave, a LoG image is produced by subtracting the image below from it.
 """
-"""
 def create_log_space(scale_space: tuple[tuple[np.ndarray, ...], ...]):
+    octave_list = [[] for _ in range(len(scale_space))]
     for i in range(len(scale_space)):
         for j in range(len(scale_space[i]) - 1):
-            for k in range(len(scale_space[i][j].shape[0])):
-                for l in range(len(scale_space[i][j].shape[1])):
-"""                
+            octave_list[i].append(np.subtract(scale_space[i][j+1], scale_space[i][j]))
+    return(space_list_to_tuple(octave_list))
 
 # Converts a list of lists of images, representing an image space, to a tuple of tuples of images
 def space_list_to_tuple(space_list: list[list[np.ndarray]]):
     return(tuple(tuple(octave) for octave in space_list))
 
+# Loads image as grayscale
+def load_image(img: str):
+    return(cv.imread(img, cv.IMREAD_GRAYSCALE))
+
 def create_scale_space_test():
-    blocks = cv.imread('blocks_L-150x150.png', cv.IMREAD_GRAYSCALE)
+    blocks = load_image("blocks_L-150x150.png")
     scale_space = create_scale_space(blocks)
     for i in range(len(scale_space)):
         for j in range(len(scale_space[i])):
             cv.imshow('(%d, %d)'.format(i, j), scale_space[i][j])
             cv.waitKey(-1)
 
+def create_log_space_test():
+    blocks = load_image("blocks_L-150x150.png")
+    scale_space = create_scale_space(blocks)
+    log_space = create_log_space(scale_space)
+    for i in range(len(log_space)):
+        for j in range(len(log_space[i])):
+            cv.imshow('(%d, %d)'.format(i, j), log_space[i][j])
+            cv.waitKey(-1)
+
 def main():
-    create_scale_space_test()
+    create_log_space_test()
 
 if __name__ == '__main__':
     main()
