@@ -45,6 +45,13 @@ def space_list_to_tuple(space_list: list[list[np.ndarray]]):
 def load_image(img: str):
     return(cv.imread(img, cv.IMREAD_GRAYSCALE))
 
+# Display all images in given space
+def display_space_images(space: tuple[tuple[np.ndarray, ...], ...]):
+    for i in range(len(space)):
+        for j in range(len(space[i])):
+            cv.imshow('%d, %d'.format(i, j), space[i][j])
+            cv.waitKey(-1)
+
 def create_scale_space_test():
     blocks = load_image("blocks_L-150x150.png")
     scale_space = create_scale_space(blocks)
@@ -57,10 +64,7 @@ def create_log_space_test():
     blocks = load_image("blocks_L-150x150.png")
     scale_space = create_scale_space(blocks)
     log_space = create_log_space(scale_space)
-    for i in range(len(log_space)):
-        for j in range(len(log_space[i])):
-            cv.imshow('(%d, %d)'.format(i, j), log_space[i][j])
-            cv.waitKey(-1)
+    display_space_images(log_space)
 
 def main():
     create_log_space_test()
