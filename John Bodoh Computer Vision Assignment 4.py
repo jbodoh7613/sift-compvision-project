@@ -55,10 +55,7 @@ def display_space_images(space: tuple[tuple[np.ndarray, ...], ...]):
 def create_scale_space_test():
     blocks = load_image("blocks_L-150x150.png")
     scale_space = create_scale_space(blocks)
-    for i in range(len(scale_space)):
-        for j in range(len(scale_space[i])):
-            cv.imshow('(%d, %d)'.format(i, j), scale_space[i][j])
-            cv.waitKey(-1)
+    display_space_images(scale_space)
 
 def create_log_space_test():
     blocks = load_image("blocks_L-150x150.png")
