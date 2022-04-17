@@ -43,7 +43,7 @@ All pixels that are larger or smaller than their neighbors by more than the give
 The dictionary has key values consisting of tuples containing the x and y coordinates of the point, its scale number, and its octave number respectively, and it has values corresponding to the difference in values the pixel has to its closest neighbor.
 Positive values indicate that the given point is a maximum among its neighbors, while negative values indicate that the given point is a minimum among its neighbors.
 """
-def create_min_max_dict(log_space: tuple[tuple[np.ndarray, ...], ...], threshold: int = 0) -> dict[tuple(int, int, int, int), int]:
+def create_min_max_dict(log_space: tuple[tuple[np.ndarray, ...], ...], threshold: int = 0) -> dict[tuple[int, int, int, int], int]:
     min_max_dict = {}
     # 3D sliding window
     for octave_index in range(len(log_space)):
@@ -86,7 +86,10 @@ def create_min_max_dict(log_space: tuple[tuple[np.ndarray, ...], ...], threshold
                         min_max_dict.update({(global_x, global_y, scale_index, octave_index): current_pixel_value - smallest_neighbor_value})
     return min_max_dict
 
-def create_keypoints(min_max_dict: dict[tuple(int, int, int, int), int], scale_space: tuple[tuple[np.ndarray, ...], ...]) -> cv.KeyPoint:
+def create_keypoints(min_max_dict: dict[tuple[int, int, int, int], int], scale_space: tuple[tuple[np.ndarray, ...], ...]) -> cv.KeyPoint:
+    keypoint_coord_list = list(min_max_dict)
+    #for point in keypoint_coord_list:
+
     return cv.KeyPoint()
 
 # Converts a list of lists of images, representing an image space, to a tuple of tuples of images
