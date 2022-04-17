@@ -18,7 +18,7 @@ def create_scale_space(img: np.ndarray, num_octaves: int = 4, num_scales: int = 
     current_sigma = sigma
     for octave_index in range(num_octaves):
         for scale_index in range(num_scales):
-            octave_list[octave_index].append(cv.GaussianBlur(img_scaled,(5,5),current_sigma))
+            octave_list[octave_index].append(cv.GaussianBlur(img_scaled,(0,0),current_sigma))
             if(scale_index == middle_scale):
                 next_sigma = current_sigma
             current_sigma = k*current_sigma
@@ -91,8 +91,8 @@ def space_list_to_tuple(space_list: list[list[np.ndarray]]):
     return(tuple(tuple(octave) for octave in space_list))
 
 # Loads image as grayscale
-def load_image(img: str):
-    return(cv.imread(img, cv.IMREAD_GRAYSCALE))
+def load_image(imgpath: str):
+    return(cv.imread(imgpath, cv.IMREAD_GRAYSCALE))
 
 # Display all images in given space
 def display_space_images(space: tuple[tuple[np.ndarray, ...], ...]):
@@ -101,26 +101,34 @@ def display_space_images(space: tuple[tuple[np.ndarray, ...], ...]):
             cv.imshow('%d, %d'.format(i, j), space[i][j])
             cv.waitKey(-1)
 
-def create_scale_space_test():
-    blocks = load_image("blocks_L-150x150.png")
-    scale_space = create_scale_space(blocks)
+def create_scale_space_test(imgpath: np.ndarray):
+    img = load_image(imgpath)
+    scale_space = create_scale_space(img)
     display_space_images(scale_space)
 
-def create_log_space_test():
-    blocks = load_image("blocks_L-150x150.png")
-    scale_space = create_scale_space(blocks)
+def create_log_space_test(imgpath: np.ndarray):
+    img = load_image(imgpath)
+    scale_space = create_scale_space(img)
     log_space = create_log_space(scale_space)
     display_space_images(log_space)
 
-def create_min_max_dict_test():
-    blocks = load_image("blocks_L-150x150.png")
-    scale_space = create_scale_space(blocks)
+def create_min_max_dict_test(imgpath: np.ndarray):
+    img = load_image(imgpath)
+    scale_space = create_scale_space(img)
     log_space = create_log_space(scale_space)
     min_max_dict = create_min_max_dict(log_space)
     print(min_max_dict)
 
+def sift_test(imgpath: np.ndarray):
+    imggray = load_image(imgpath)
+    img = cv.imread(imgpath, cv.IMREAD_COLOR)
+    sift = cv.SIFT_create()
+    kp = sift.detect(imggray, None)
+    cv.imshow('SIFT Test', cv.drawKeypoints(imggray, kp, img))
+    cv.waitKey(-1)
+
 def main():
-    create_min_max_dict_test()
+    sift_test('blocks_L-150x150.png')
 
 if __name__ == '__main__':
     main()
