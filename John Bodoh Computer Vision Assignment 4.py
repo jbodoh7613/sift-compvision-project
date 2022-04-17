@@ -11,7 +11,7 @@ For each successive octave, the image that is used is the image used in the prev
 """
 # first starting sigma can be 1.6 or half of 2^(1/2)
 # starting sigma for each new octave should be middle sigma value used for previous octave
-def create_scale_space(img: np.ndarray, num_octaves: int = 4, num_scales: int = 5, sigma: float = 1.6, k: float = 1.414214):
+def create_scale_space(img: np.ndarray, num_octaves: int = 4, num_scales: int = 5, sigma: float = 1.6, k: float = 1.414214) -> tuple[tuple[np.ndarray, ...], ...]:
     middle_scale = num_scales//2 # We use integer division as the floor of the true quotient will be the value of the looping variable when the middle scale is encountered
     octave_list = [[] for _ in range(num_octaves)]
     img_scaled = img.copy()
@@ -30,7 +30,7 @@ def create_scale_space(img: np.ndarray, num_octaves: int = 4, num_scales: int = 
 This function takes a scale space tuple and returns a LoG (Laplacian of Gaussian) space represented as a tuple of tuples, where each tuple within the main tuple consists of the LoG images of its respective octave.
 LoG is calculated using Difference of Gaussians, where, for each image in each octave, a LoG image is produced by subtracting the image below from it.
 """
-def create_log_space(scale_space: tuple[tuple[np.ndarray, ...], ...]):
+def create_log_space(scale_space: tuple[tuple[np.ndarray, ...], ...]) -> tuple[tuple[np.ndarray, ...], ...]:
     octave_list = [[] for _ in range(len(scale_space))]
     for octave_index in range(len(scale_space)):
         for scale_index in range(len(scale_space[octave_index]) - 1): # One less DoG image per octave than scaled image
@@ -43,7 +43,7 @@ All pixels that are larger or smaller than their neighbors by more than the give
 The dictionary has key values consisting of tuples containing the x and y coordinates of the point, its scale number, and its octave number respectively, and it has values corresponding to the difference in values the pixel has to its closest neighbor.
 Positive values indicate that the given point is a maximum among its neighbors, while negative values indicate that the given point is a minimum among its neighbors.
 """
-def create_min_max_dict(log_space: tuple[tuple[np.ndarray, ...], ...], threshold: int = 0):
+def create_min_max_dict(log_space: tuple[tuple[np.ndarray, ...], ...], threshold: int = 0) -> dict[tuple(int, int, int, int), int]:
     min_max_dict = {}
     # 3D sliding window
     for octave_index in range(len(log_space)):
@@ -86,12 +86,15 @@ def create_min_max_dict(log_space: tuple[tuple[np.ndarray, ...], ...], threshold
                         min_max_dict.update({(global_x, global_y, scale_index, octave_index): current_pixel_value - smallest_neighbor_value})
     return min_max_dict
 
+def create_keypoints(min_max_dict: dict[tuple(int, int, int, int), int], scale_space: tuple[tuple[np.ndarray, ...], ...]) -> cv.KeyPoint:
+    return cv.KeyPoint()
+
 # Converts a list of lists of images, representing an image space, to a tuple of tuples of images
-def space_list_to_tuple(space_list: list[list[np.ndarray]]):
+def space_list_to_tuple(space_list: list[list[np.ndarray]]) -> tuple[tuple[np.ndarray, ...], ...]:
     return(tuple(tuple(octave) for octave in space_list))
 
 # Loads image as grayscale
-def load_image(imgpath: str):
+def load_image(imgpath: str) -> np.ndarray:
     return(cv.imread(imgpath, cv.IMREAD_GRAYSCALE))
 
 # Display all images in given space
@@ -119,6 +122,7 @@ def create_min_max_dict_test(imgpath: np.ndarray):
     min_max_dict = create_min_max_dict(log_space)
     print(min_max_dict)
 
+# Check and compare output of built-in SIFT function
 def sift_test(imgpath: np.ndarray):
     imggray = load_image(imgpath)
     img = cv.imread(imgpath, cv.IMREAD_COLOR)
