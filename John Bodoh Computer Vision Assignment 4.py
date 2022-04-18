@@ -89,6 +89,9 @@ def create_min_max_dict(log_space: tuple[tuple[np.ndarray, ...], ...], threshold
     return min_max_dict
 
 
+"""
+This function takes a min_max_dict as well as a scale space tuple, along with values of sigma and k, and outputs a tuple of all keypoint objects, performing orientation assignment.
+"""
 def create_keypoints(min_max_dict: dict[tuple[int, int, int, int], int], scale_space: tuple[tuple[np.ndarray, ...], ...], sigma: float = 1.6, k: float = 1.414214) -> tuple[cv.KeyPoint, ...]:
     keypoint_coord_list = list(min_max_dict)
     num_octaves = len(scale_space)
